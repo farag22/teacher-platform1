@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة متقدمة - ابنِ شيئًا يستحق أن يُرى</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* CSS Variables & Reset */
+        :root {
+            /* Dark Theme (Default) */
+            --bg-main: #0a0a0a;
+            --bg-card: #111111;
+            --bg-card-hover: #161616;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --border-color: #27272a;
+            --accent: #ffffff;
+            --accent-glow: rgba(255, 255, 255, 0.1);
+            --gradient-primary: linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%);
+            --shadow-subtle: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 40px rgba(255, 255, 255, 0.05);
+            --glass-bg: rgba(10, 10, 10, 0.7);
+        }
+
+        [data-theme="light"] {
+            --bg-main: #fafafa;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f4f4f5;
+            --text-primary: #09090b;
+            --text-secondary: #71717a;
+            --border-color: #e4e4e7;
+            --accent: #09090b;
+            --accent-glow: rgba(0, 0, 0, 0.05);
+            --gradient-primary: linear-gradient(135deg, #09090b 0%, #71717a 100%);
+            --shadow-subtle: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-glow: 0 0 40px rgba(0, 0, 0, 0.03);
+            --glass-bg: rgba(250, 250, 250, 0.8);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+        button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+        /* Typography */
+        h1, h2, h3, h4 { color: var(--text-primary); line-height: 1.2; font-weight: 700; }
+        h1 { font-size: clamp(2.5rem, 5vw, 4.5rem); letter-spacing: -0.02em; }
+        h2 { font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.01em; }
+        p { color: var(--text-secondary); font-size: 1.1rem; }
+
+        /* Utilities */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        .text-gradient {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            gap: 0.5rem;
+        }
+        .btn-primary {
+            background-color: var(--accent);
+            color: var(--bg-main);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px var(--accent-glow);
+            opacity: 0.9;
+        }
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+        .btn-secondary:hover {
+            background-color: var(--bg-card-hover);
+            border-color: var(--text-secondary);
+        }
+        
+        .section-header { text-align: center; margin-bottom: 4rem; }
+        .section-header p { max-width: 600px; margin: 1rem auto 0; }
+
+        /* Contact Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            z-index: 1000; display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-content {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 24px; padding: 3rem; width: 90%; max-width: 500px;
+            transform: translateY(20px); transition: transform 0.3s ease;
+            position: relative; box-shadow: var(--shadow-glow);
+        }
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+        .modal-close {
+            position: absolute; top: 1.5rem; left: 1.5rem; color: var(--text-secondary);
+            transition: color 0.2s;
+        }
+        .modal-close:hover { color: var(--text-primary); }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-size: 0.95rem; font-weight: 600; text-align: right; }
+        .form-control {
+            width: 100%; padding: 0.75rem 1rem; border-radius: 12px;
+            background: var(--bg-main); border: 1px solid var(--border-color);
+            color: var(--text-primary); font-family: inherit; transition: border-color 0.2s;
+        }
+        .form-control:focus { outline: none; border-color: var(--text-primary); }
+        textarea.form-control { resize: vertical; min-height: 120px; }
+
+        /* Animations */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+        header.scrolled {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.75rem 0;
+        }
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px; margin: 0 auto; padding: 0 2rem;
+        }
+        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.05em; display: flex; align-items: center; gap: 0.5rem; }
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-links a { font-size: 0.95rem; font-weight: 600; color: var(--text-secondary); transition: color 0.2s; position: relative; }
+        .nav-links a:hover { color: var(--text-primary); }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -4px; right: 0; width: 0; height: 2px;
+            background-color: var(--text-primary); transition: width 0.3s ease;
+        }
+        .nav-links a:hover::after { width: 100%; left: 0; right: auto; }
+        
+        .nav-actions { display: flex; align-items: center; gap: 1rem; }
+        .theme-toggle {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-primary); transition: all 0.3s ease;
+        }
+        .theme-toggle:hover { background: var(--bg-card-hover); transform: scale(1.05); }
+        .mobile-menu-btn { display: none; color: var(--text-primary); }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            position: fixed; top: 0; right: -100%; width: 100%; height: 100vh;
+            background: var(--bg-main); z-index: 99;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+        .mobile-menu.active { right: 0; }
+        .mobile-menu a { font-size: 2rem; font-weight: 700; margin: 1rem 0; }
+        .close-menu { position: absolute; top: 1.5rem; left: 2rem; color: var(--text-primary); }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; position: relative; padding-top: 5rem;
+        }
+        .hero-content { max-width: 800px; z-index: 2; position: relative; animation: fadeUpDirect 1s ease forwards; }
+        @keyframes fadeUpDirect {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .hero p { margin: 1.5rem auto 2.5rem; max-width: 600px; font-size: 1.25rem; }
+        .hero-btns { display: flex; gap: 1rem; justify-content: center; margin-bottom: 1.5rem; }
+        .hero-note { font-size: 0.85rem; color: var(--text-secondary); }
+        
+        /* Hero Visual Background */
+        .hero-bg {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: hidden;
+        }
+        .glow-circle {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 600px; height: 600px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0) 70%);
+            filter: blur(40px); animation: pulse 8s infinite alternate;
+        }
+        [data-theme="light"] .glow-circle { background: radial-gradient(circle, rgba(0,0,0,0.03) 0%, rgba(255,255,255,0) 70%); }
+        .grid-bg {
+            position: absolute; inset: 0;
+            background-image: linear-gradient(to right, var(--border-color) 1px, transparent 1px),
+                              linear-gradient(to bottom, var(--border-color) 1px, transparent 1px);
+            background-size: 50px 50px; opacity: 0.2;
+            mask-image: radial-gradient(circle at center, black, transparent 80%);
+            -webkit-mask-image: radial-gradient(circle at center, black, transparent 80%);
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            100% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+        }
+
+        /* Social Proof */
+        .social-proof { padding: 4rem 0; border-bottom: 1px solid var(--border-color); text-align: center; }
+        .social-proof p { font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 2rem; }
+        .logos { display: flex; justify-content: center; gap: 4rem; flex-wrap: wrap; opacity: 0.6; }
+        .logos span { font-size: 1.5rem; font-weight: 800; letter-spacing: 0.1em; font-family: sans-serif; }
+
+        /* Features Section */
+        .features { padding: 8rem 0; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .feature-card {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            padding: 2.5rem 2rem; border-radius: 24px;
+            transition: all 0.3s ease; position: relative; overflow: hidden;
+        }
+        .feature-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.06), transparent 40%);
+            opacity: 0; transition: opacity 0.3s; z-index: 0; pointer-events: none;
+        }
+        [data-theme="light"] .feature-card::before {
+            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(0,0,0,0.03), transparent 40%);
+        }
+        .feature-card:hover::before { opacity: 1; }
+        .feature-card:hover { transform: translateY(-5px); border-color: var(--text-secondary); box-shadow: var(--shadow-subtle); }
+        .feature-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            background: var(--bg-main); border: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 1.5rem; color: var(--text-primary);
+        }
+        .feature-card h3 { margin-bottom: 0.75rem; font-size: 1.25rem; position: relative; z-index: 1; }
+        .feature-card p { font-size: 0.95rem; position: relative; z-index: 1; }
+
+        /* Bento Grid */
+        .bento { padding: 8rem 0; }
+        .bento-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 300px);
+            gap: 1.5rem;
+        }
+        .bento-card {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 32px; padding: 2.5rem; display: flex; flex-direction: column;
+            justify-content: flex-end; position: relative; overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        .bento-card:hover { transform: scale(0.99); }
+        .bento-card h3 { font-size: 1.5rem; margin-bottom: 0.5rem; z-index: 2; }
+        .bento-card p { font-size: 1rem; z-index: 2; }
+        
+        .bento-1 { grid-column: span 2; grid-row: span 2; background: linear-gradient(to bottom right, var(--bg-card), var(--bg-main)); }
+        .bento-2 { grid-column: span 2; grid-row: span 1; }
+        .bento-3 { grid-column: span 1; grid-row: span 1; }
+        .bento-4 { grid-column: span 1; grid-row: span 1; }
+
+        /* Product Showcase (Dashboard Mockup) */
+        .showcase { padding: 8rem 0; overflow: hidden; }
+        .dashboard-mockup {
+            background: var(--bg-main); border: 1px solid var(--border-color);
+            border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-glow);
+            display: flex; height: 600px; margin-top: 4rem;
+        }
+        .db-sidebar { width: 240px; border-left: 1px solid var(--border-color); padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+        .db-main { flex: 1; padding: 2rem; display: flex; flex-direction: column; gap: 2rem; }
+        .db-topbar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); }
+        .db-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        .db-stat-card { background: var(--bg-card); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color); }
+        .db-stat-value { font-size: 2rem; font-weight: 700; margin-top: 0.5rem; }
+        .db-content { display: flex; gap: 1.5rem; flex: 1; }
+        .db-chart { flex: 2; background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-color); padding: 1.5rem; }
+        .db-activity { flex: 1; background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-color); padding: 1.5rem; }
+        
+        /* Abstract Skeleton UI */
+        .skel-line { height: 12px; background: var(--border-color); border-radius: 6px; margin-bottom: 10px; }
+        .skel-line.short { width: 60%; }
+        .skel-circle { width: 32px; height: 32px; background: var(--border-color); border-radius: 50%; }
+
+        /* How It Works */
+        .steps { padding: 8rem 0; }
+        .steps-container { display: flex; justify-content: space-between; position: relative; margin-top: 4rem; }
+        .steps-container::before {
+            content: ''; position: absolute; top: 40px; left: 10%; right: 10%; height: 1px;
+            background: var(--border-color); z-index: 0;
+        }
+        .step { text-align: center; position: relative; z-index: 1; width: 30%; }
+        .step-number {
+            width: 80px; height: 80px; background: var(--bg-main); border: 1px solid var(--border-color);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; font-weight: 800; margin: 0 auto 1.5rem;
+            box-shadow: 0 0 20px var(--bg-main); transition: transform 0.3s;
+        }
+        .step:hover .step-number { transform: scale(1.1); border-color: var(--text-primary); }
+        .step h3 { margin-bottom: 0.5rem; }
+
+        /* Pricing */
+        .pricing { padding: 8rem 0; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 4rem; }
+        .price-card {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 24px; padding: 3rem 2rem; display: flex; flex-direction: column;
+            transition: transform 0.3s ease; position: relative;
+        }
+        .price-card:hover { transform: translateY(-10px); }
+        .price-card.popular { border-color: var(--text-secondary); box-shadow: var(--shadow-glow); transform: scale(1.05); }
+        .price-card.popular:hover { transform: scale(1.05) translateY(-5px); }
+        .popular-badge {
+            position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+            background: var(--text-primary); color: var(--bg-main);
+            padding: 0.25rem 1rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700;
+        }
+        .price-name { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .price-amount { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; display: flex; align-items: baseline; gap: 0.25rem; }
+        .price-amount span { font-size: 1rem; font-weight: 400; color: var(--text-secondary); }
+        .price-desc { color: var(--text-secondary); margin-bottom: 2rem; font-size: 0.95rem; }
+        .price-features { margin-bottom: 2.5rem; flex: 1; }
+        .price-features li { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; font-size: 0.95rem; }
+        .price-features i { color: var(--text-primary); }
+
+        /* Portfolio */
+        .portfolio { padding: 8rem 0; background: var(--bg-card); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
+        .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 4rem; }
+        .portfolio-item {
+            border-radius: 16px; overflow: hidden; border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease; position: relative;
+            background: var(--bg-main); display: flex; flex-direction: column;
+        }
+        .portfolio-item:hover { transform: translateY(-5px); box-shadow: var(--shadow-glow); }
+        .portfolio-img { width: 100%; height: 200px; object-fit: cover; object-position: top; border-bottom: 1px solid var(--border-color); }
+        .portfolio-info { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .portfolio-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .portfolio-desc { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem; }
+        .portfolio-item-featured { grid-column: 1 / -1; }
+        .portfolio-item-featured .portfolio-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; padding: 0.5rem; background: var(--bg-main); }
+        .portfolio-item-featured .portfolio-gallery img { width: 100%; height: 220px; object-fit: cover; object-position: center; border-radius: 10px; border: 1px solid var(--border-color); }
+        .portfolio-item-featured .portfolio-info { padding: 2rem; }
+        .portfolio-meta { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+        .portfolio-badge { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.8rem; border-radius: 999px; background: rgba(34, 197, 94, 0.14); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.3); font-size: 0.8rem; font-weight: 700; }
+        .portfolio-link { display: inline-flex; align-items: center; gap: 0.5rem; }
+        @media (max-width: 768px) {
+            .portfolio-item-featured .portfolio-gallery { grid-template-columns: 1fr; }
+            .portfolio-item-featured .portfolio-gallery img { height: 220px; }
+        }
+
+        /* Purchase Modal */
+        #purchase-modal .modal-content { max-width: 600px; }
+        .purchase-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; }
+        .purchase-header-info h3 { margin-bottom: 0.25rem; }
+        .purchase-header-info p { color: var(--accent); font-weight: 700; font-size: 1.2rem; }
+
+        /* Testimonials */
+        .testimonials { padding: 8rem 0; overflow: hidden; }
+        .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+        .testi-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 24px; padding: 2rem; }
+        .testi-stars { display: flex; gap: 0.25rem; margin-bottom: 1rem; color: #fbbf24; }
+        .testi-text { font-size: 1.1rem; font-style: italic; margin-bottom: 2rem; }
+        .testi-user { display: flex; align-items: center; gap: 1rem; }
+        .testi-avatar {
+            width: 48px; height: 48px; border-radius: 50%; background: var(--border-color);
+            display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem;
+        }
+        .testi-info h4 { font-size: 1rem; }
+        .testi-info p { font-size: 0.85rem; }
+
+        /* FAQ */
+        .faq { padding: 8rem 0; max-width: 800px; margin: 0 auto; }
+        .accordion { margin-top: 3rem; }
+        .accordion-item { border-bottom: 1px solid var(--border-color); }
+        .accordion-header {
+            width: 100%; text-align: right; padding: 1.5rem 0; font-size: 1.1rem; font-weight: 600;
+            display: flex; justify-content: space-between; align-items: center; color: var(--text-primary);
+        }
+        .accordion-header i { transition: transform 0.3s ease; }
+        .accordion-header.active i { transform: rotate(45deg); }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+        .accordion-content p { padding-bottom: 1.5rem; }
+
+        /* Final CTA */
+        .cta-final { padding: 8rem 0; text-align: center; position: relative; }
+        .cta-box {
+            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 32px;
+            padding: 6rem 2rem; position: relative; overflow: hidden; box-shadow: var(--shadow-glow);
+        }
+        .cta-box::before {
+            content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 80%; height: 1px; background: linear-gradient(90deg, transparent, var(--text-primary), transparent); opacity: 0.5;
+        }
+        .cta-box h2 { font-size: clamp(2rem, 4vw, 3.5rem); margin-bottom: 1rem; }
+        .cta-box p { font-size: 1.25rem; margin-bottom: 2.5rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+
+        /* Footer */
+        footer { border-top: 1px solid var(--border-color); padding: 4rem 0 2rem; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 4rem; margin-bottom: 4rem; }
+        .footer-brand p { margin-top: 1rem; font-size: 0.95rem; max-width: 300px; }
+        .footer-links h4 { margin-bottom: 1.5rem; font-size: 1rem; }
+        .footer-links ul li { margin-bottom: 0.75rem; }
+        .footer-links a { color: var(--text-secondary); font-size: 0.95rem; transition: color 0.2s; }
+        .footer-links a:hover { color: var(--text-primary); }
+        .footer-bottom {
+            display: flex; justify-content: space-between; align-items: center;
+            padding-top: 2rem; border-top: 1px solid var(--border-color);
+        }
+        .social-icons { display: flex; gap: 1rem; }
+        .social-icons a { color: var(--text-secondary); transition: color 0.2s; }
+        .social-icons a:hover { color: var(--text-primary); }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .bento-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; }
+            .bento-1 { grid-column: span 2; }
+            .bento-2 { grid-column: span 2; }
+            .bento-3 { grid-column: span 1; }
+            .bento-4 { grid-column: span 1; }
+            .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+            .price-card.popular { transform: scale(1); }
+            .price-card.popular:hover { transform: translateY(-10px); }
+            .testi-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links, .nav-actions .btn { display: none; }
+            .mobile-menu-btn { display: block; }
+            .steps-container { flex-direction: column; gap: 3rem; align-items: center; }
+            .steps-container::before {
+                top: 0; bottom: 0; left: 50%; right: auto; width: 1px; height: 100%;
+            }
+            .step { width: 100%; }
+            .pricing-grid { grid-template-columns: 1fr; }
+            .testi-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+            .dashboard-mockup { height: auto; flex-direction: column; }
+            .db-sidebar { width: 100%; border-left: none; border-bottom: 1px solid var(--border-color); flex-direction: row; justify-content: space-between; }
+            .db-content { flex-direction: column; }
+            .db-stats { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 480px) {
+            .hero-btns { flex-direction: column; width: 100%; }
+            .btn { width: 100%; }
+            .footer-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header id="header">
+        <div class="nav-container">
+            <div class="logo">
+                <i data-lucide="hexagon" stroke-width="2.5"></i>
+                <span>نيكسوس</span>
+            </div>
+            
+            <nav class="nav-links">
+                <a href="#hero">الرئيسية</a>
+                <a href="#features">المميزات</a>
+                <a href="#how-it-works">كيف يعمل</a>
+                <a href="#pricing">الأسعار</a>
+                <a href="#faq">الأسئلة الشائعة</a>
+            </nav>
+
+            <div class="nav-actions">
+                <button class="theme-toggle" id="theme-toggle" aria-label="تبديل المظهر">
+                    <i data-lucide="sun" class="light-icon" style="display: none;"></i>
+                    <i data-lucide="moon" class="dark-icon"></i>
+                </button>
+                <button class="btn btn-secondary" onclick="document.getElementById('contact-modal').classList.add('active'); document.body.style.overflow='hidden';">تواصل معنا</button>
+                <a href="#pricing" class="btn btn-primary">ابدأ مجانًا</a>
+                <button class="mobile-menu-btn" id="mobile-menu-btn">
+                    <i data-lucide="menu"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <button class="close-menu" id="close-menu">
+            <i data-lucide="x" size="32"></i>
+        </button>
+        <a href="#hero" class="mobile-link">الرئيسية</a>
+        <a href="#features" class="mobile-link">المميزات</a>
+        <a href="#how-it-works" class="mobile-link">كيف يعمل</a>
+        <a href="#pricing" class="mobile-link">الأسعار</a>
+        <a href="#faq" class="mobile-link">الأسئلة الشائعة</a>
+        <div style="margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; width: 80%; max-width: 300px;">
+            <button class="btn btn-secondary" onclick="closeMenuFunc(); document.getElementById('contact-modal').classList.add('active'); document.body.style.overflow='hidden';">تواصل معنا</button>
+            <a href="#pricing" class="btn btn-primary" onclick="closeMenuFunc()">ابدأ مجانًا</a>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+        <div class="hero-bg">
+            <div class="grid-bg"></div>
+            <div class="glow-circle"></div>
+        </div>
+        
+        <div class="container hero-content">
+            <h1 class="text-gradient">ابنِ شيئًا يستحق أن يُرى.</h1>
+            <p>منصة متكاملة لبناء وتوسيع نطاق منتجاتك الرقمية بسرعة فائقة وتصميم لا يُضاهى. ركز على الفكرة، ودع لنا التعقيد التقني.</p>
+            
+            <div class="hero-btns">
+                <a href="#pricing" class="btn btn-primary">
+                    ابدأ الآن <i data-lucide="arrow-left" size="18"></i>
+                </a>
+                <a href="#features" class="btn btn-secondary">
+                    استكشف المميزات
+                </a>
+            </div>
+            <span class="hero-note">لا تحتاج إلى بطاقة ائتمانية • إعداد سريع • تجربة مجانية</span>
+        </div>
+    </section>
+
+    <!-- Social Proof -->
+    <section class="social-proof fade-up">
+        <div class="container">
+            <p>موثوق به من الفرق التي تبني المستقبل.</p>
+            <div class="logos">
+                <span>NOVA</span>
+                <span>LUMA</span>
+                <span>ORBIT</span>
+                <span>NEXUS</span>
+                <span>ARC</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features container">
+        <div class="section-header fade-up">
+            <h2>كل ما تحتاجه. بدون التعقيد.</h2>
+            <p>أدوات قوية مصممة بعناية لتمنحك تحكمًا كاملًا وأداءً استثنائيًا دون التضحية بالبساطة.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card fade-up">
+                <div class="feature-icon"><i data-lucide="zap"></i></div>
+                <h3>سرعة فائقة</h3>
+                <p>بنية تحتية محسنة لضمان تحميل صفحاتك في أجزاء من الثانية، مما يحسن تجربة المستخدم ومعدلات التحويل.</p>
+            </div>
+            <div class="feature-card fade-up" style="transition-delay: 0.1s;">
+                <div class="feature-icon"><i data-lucide="pen-tool"></i></div>
+                <h3>تصميم ذكي</h3>
+                <p>واجهات مصممة بعناية تتكيف مع احتياجاتك، مع تركيز كامل على تجربة المستخدم (UX) الدقيقة.</p>
+            </div>
+            <div class="feature-card fade-up" style="transition-delay: 0.2s;">
+                <div class="feature-icon"><i data-lucide="shield-check"></i></div>
+                <h3>أمان متقدم</h3>
+                <p>حماية متكاملة لبياناتك وبيانات عملائك باستخدام أحدث بروتوكولات التشفير والمعايير الأمنية.</p>
+            </div>
+            <div class="feature-card fade-up">
+                <div class="feature-icon"><i data-lucide="bar-chart-3"></i></div>
+                <h3>تحليلات متقدمة</h3>
+                <p>لوحات معلومات لحظية تمنحك رؤى عميقة حول أداء منتجك وسلوك المستخدمين لاتخاذ قرارات أفضل.</p>
+            </div>
+            <div class="feature-card fade-up" style="transition-delay: 0.1s;">
+                <div class="feature-icon"><i data-lucide="blocks"></i></div>
+                <h3>تكاملات متعددة</h3>
+                <p>اربط منصتك بأدواتك المفضلة بسهولة من خلال واجهة برمجة تطبيقات (API) قوية وموثقة جيدًا.</p>
+            </div>
+            <div class="feature-card fade-up" style="transition-delay: 0.2s;">
+                <div class="feature-icon"><i data-lucide="sparkles"></i></div>
+                <h3>تجربة استثنائية</h3>
+                <p>اهتمام بأدق التفاصيل لتقديم تجربة استخدام لا تُنسى تجعل عملائك يعودون دائمًا.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bento Grid -->
+    <section class="bento container fade-up">
+        <div class="bento-grid">
+            <div class="bento-card bento-1">
+                <h3>تحكم كامل من مكان واحد</h3>
+                <p>أدر جميع مشاريعك، فريقك، وفواتيرك من لوحة تحكم واحدة مصممة للوضوح والكفاءة.</p>
+            </div>
+            <div class="bento-card bento-2">
+                <h3>تحليلات لحظية</h3>
+                <p>راقب نمو عملك في الوقت الفعلي مع رسوم بيانية تفاعلية.</p>
+            </div>
+            <div class="bento-card bento-3">
+                <i data-lucide="server" size="32" style="margin-bottom: auto; color: var(--text-secondary);"></i>
+                <h3>99.9% Uptime</h3>
+                <p>بنية تحتية موثوقة لا تتوقف.</p>
+            </div>
+            <div class="bento-card bento-4">
+                <i data-lucide="scaling" size="32" style="margin-bottom: auto; color: var(--text-secondary);"></i>
+                <h3>مصمم ليكبر معك</h3>
+                <p>توسع بلا حدود عند الحاجة.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Showcase -->
+    <section class="showcase container fade-up">
+        <div class="section-header">
+            <h2>نظرة من الداخل</h2>
+            <p>واجهة مستخدم مصممة للمحترفين، تجمع بين القوة والجمال.</p>
+        </div>
+        
+        <div class="dashboard-mockup">
+            <div class="db-sidebar">
+                <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: bold; margin-bottom: 2rem;">
+                    <div class="skel-circle" style="width: 24px; height: 24px;"></div>
+                    NEXUS APP
+                </div>
+                <div class="skel-line"></div>
+                <div class="skel-line short"></div>
+                <div class="skel-line"></div>
+                <div style="margin-top: auto;">
+                    <div class="skel-line"></div>
+                </div>
+            </div>
+            <div class="db-main">
+                <div class="db-topbar">
+                    <div class="skel-line short" style="width: 150px;"></div>
+                    <div class="skel-circle"></div>
+                </div>
+                <div class="db-stats">
+                    <div class="db-stat-card">
+                        <div class="skel-line short"></div>
+                        <div class="db-stat-value">24,592</div>
+                    </div>
+                    <div class="db-stat-card">
+                        <div class="skel-line short"></div>
+                        <div class="db-stat-value">+14.5%</div>
+                    </div>
+                    <div class="db-stat-card">
+                        <div class="skel-line short"></div>
+                        <div class="db-stat-value">$12,450</div>
+                    </div>
+                </div>
+                <div class="db-content">
+                    <div class="db-chart">
+                        <div class="skel-line short" style="margin-bottom: 2rem;"></div>
+                        <div style="height: 150px; border-bottom: 1px solid var(--border-color); position: relative;">
+                            <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 100">
+                                <path d="M0,100 L0,50 Q25,20 50,60 T100,30 L100,100 Z" fill="var(--accent-glow)" />
+                                <path d="M0,50 Q25,20 50,60 T100,30" fill="none" stroke="var(--text-primary)" stroke-width="2" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="db-activity">
+                        <div class="skel-line short" style="margin-bottom: 1.5rem;"></div>
+                        <div style="display: flex; gap: 1rem; margin-bottom: 1rem; align-items: center;">
+                            <div class="skel-circle" style="width: 24px; height: 24px;"></div>
+                            <div style="flex: 1;"><div class="skel-line"></div></div>
+                        </div>
+                        <div style="display: flex; gap: 1rem; margin-bottom: 1rem; align-items: center;">
+                            <div class="skel-circle" style="width: 24px; height: 24px;"></div>
+                            <div style="flex: 1;"><div class="skel-line"></div></div>
+                        </div>
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <div class="skel-circle" style="width: 24px; height: 24px;"></div>
+                            <div style="flex: 1;"><div class="skel-line short"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="steps container fade-up">
+        <div class="section-header">
+            <h2>من الفكرة إلى التنفيذ.</h2>
+            <p>ثلاث خطوات بسيطة تفصلك عن إطلاق منتجك التالي.</p>
+        </div>
+
+        <div class="steps-container">
+            <div class="step">
+                <div class="step-number">01</div>
+                <h3>ابدأ</h3>
+                <p>أنشئ حسابك في ثوانٍ واربط مستودع الكود الخاص بك بسهولة.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">02</div>
+                <h3>خصص</h3>
+                <p>اختر الإعدادات المناسبة لمشروعك وعدّل التصميم ليلائم هويتك.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">03</div>
+                <h3>انطلق</h3>
+                <p>انشر مشروعك للعالم بضغطة زر واحدة وراقبه ينمو.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="portfolio container fade-up">
+        <div class="section-header">
+            <h2>من أعمالنا</h2>
+            <p>منصة المعلم - نظام متكامل لإدارة الدروس والمجموعات باحترافية.</p>
+        </div>
+        <div class="portfolio-grid">
+            <div class="portfolio-item">
+                <img src="assets/portfolio/1000846423.jpg" alt="قائمة المنصة" class="portfolio-img">
+                <div class="portfolio-info">
+                    <div>
+                        <h3 class="portfolio-title">الواجهة الرئيسية</h3>
+                        <p class="portfolio-desc">وصول سريع لجميع أدوات المنصة (حضور، غياب، امتحانات، مدفوعات).</p>
+                    </div>
+                </div>
+            </div>
+            <div class="portfolio-item">
+                <img src="assets/portfolio/1000846433.jpg" alt="سجل الحصص" class="portfolio-img">
+                <div class="portfolio-info">
+                    <div>
+                        <h3 class="portfolio-title">سجل الحصص والحضور</h3>
+                        <p class="portfolio-desc">تسجيل حضور الطلاب بنقرة واحدة أو بمسح كود QR مع إحصائيات فورية.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="portfolio-item">
+                <img src="assets/portfolio/1000846431.jpg" alt="المدفوعات" class="portfolio-img">
+                <div class="portfolio-info">
+                    <div>
+                        <h3 class="portfolio-title">إدارة المصاريف</h3>
+                        <p class="portfolio-desc">متابعة مدفوعات كل طالب، المحصل، والمتبقي مع إمكانية تصدير التقارير.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="portfolio-item">
+                <img src="assets/portfolio/1000846434.jpg" alt="لوحة الأوائل" class="portfolio-img">
+                <div class="portfolio-info">
+                    <div>
+                        <h3 class="portfolio-title">رصد الدرجات</h3>
+                        <p class="portfolio-desc">لوحة الأوائل وإصدار شهادات التقدير تلقائيًا للطلاب المتميزين.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="portfolio-item">
+                <img src="assets/portfolio/1000846438.jpg" alt="لوحة التحكم" class="portfolio-img">
+                <div class="portfolio-info">
+                    <div>
+                        <h3 class="portfolio-title">لوحة تحكم الإدارة</h3>
+                        <p class="portfolio-desc">إحصائيات شاملة للمنصة، إدارة المعلمين، والتحكم بالصلاحيات.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="portfolio-item">
+                <img src="assets/portfolio/1000846427.jpg" alt="المجاميع" class="portfolio-img">
+                <div class="portfolio-info">
+                    <div>
+                        <h3 class="portfolio-title">إدارة المجاميع</h3>
+                        <p class="portfolio-desc">تنظيم السناتر، المواعيد، ونظام الاشتراك (شهري/بالحصة).</p>
+                    </div>
+                </div>
+            </div>
+            <article class="portfolio-item portfolio-item-featured">
+                <div class="portfolio-gallery">
+                    <img src="assets/portfolio/tawajuh-lighting-work-1.webp" alt="واجهة متجر توهج للإضاءة" loading="lazy">
+                    <img src="assets/portfolio/tawajuh-lighting-work-2.webp" alt="منتجات الإضاءة في متجر توهج" loading="lazy">
+                    <img src="assets/portfolio/tawajuh-lighting-work-3.webp" alt="تشكيلة الثريات والإنارة في متجر توهج" loading="lazy">
+                </div>
+                <div class="portfolio-info">
+                    <div>
+                        <div class="portfolio-meta">
+                            <h3 class="portfolio-title">متجر توهج للإضاءة</h3>
+                            <span class="portfolio-badge"><i data-lucide="badge-check" size="15"></i> مشروع مدفوع</span>
+                        </div>
+                        <p class="portfolio-desc">متجر إلكتروني عربي متكامل لعرض وبيع منتجات الإضاءة، مع تصنيفات واضحة، عروض للمنتجات، سلة مشتريات، وتجربة تسوق RTL أنيقة ومتجاوبة.</p>
+                    </div>
+                    <a class="btn btn-secondary portfolio-link" href="https://tawajuh-lighting-store.vercel.app/" target="_blank" rel="noopener noreferrer">
+                        <i data-lucide="external-link" size="17"></i>
+                        معاينة المتجر
+                    </a>
+                </div>
+            </article>
+        </div>
+        <div style="text-align: center; margin-top: 4rem;">
+            <button class="btn btn-primary" style="padding: 1rem 2.5rem; font-size: 1.1rem;" onclick="openPurchaseModal('منصة المعلم', 'نظام إدارة تعليمي متكامل', 'تواصل لمعرفة السعر')">
+                <i data-lucide="shopping-cart"></i>
+                شراء منصة المعلم الآن
+            </button>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="pricing container fade-up">
+        <div class="section-header">
+            <h2>أسعار بسيطة. قيمة حقيقية.</h2>
+            <p>خطط مرنة تناسب جميع أحجام الفرق والمشاريع.</p>
+        </div>
+
+        <div class="pricing-grid">
+            <div class="price-card">
+                <div class="price-name">Starter</div>
+                <div class="price-amount">$0 <span>/ شهر</span></div>
+                <div class="price-desc">مثالي للمشاريع الشخصية والتجارب.</div>
+                <ul class="price-features">
+                    <li><i data-lucide="check" size="18"></i> مشروع واحد</li>
+                    <li><i data-lucide="check" size="18"></i> تحليلات أساسية</li>
+                    <li><i data-lucide="check" size="18"></i> دعم مجتمعي</li>
+                </ul>
+                <button class="btn btn-secondary" style="width: 100%;">ابدأ مجانًا</button>
+            </div>
+            
+            <div class="price-card popular">
+                <div class="popular-badge">الأكثر شيوعًا</div>
+                <div class="price-name">Professional</div>
+                <div class="price-amount">$29 <span>/ شهر</span></div>
+                <div class="price-desc">للفرق الصغيرة التي تبني منتجات جادة.</div>
+                <ul class="price-features">
+                    <li><i data-lucide="check" size="18"></i> مشاريع غير محدودة</li>
+                    <li><i data-lucide="check" size="18"></i> تحليلات متقدمة</li>
+                    <li><i data-lucide="check" size="18"></i> دعم بأولوية</li>
+                    <li><i data-lucide="check" size="18"></i> دومين مخصص</li>
+                </ul>
+                <button class="btn btn-primary" style="width: 100%;" onclick="openPurchaseModal('خطة Professional', 'للفرق الصغيرة التي تبني منتجات جادة', '$29 / شهر')">اختر Professional</button>
+            </div>
+            
+            <div class="price-card">
+                <div class="price-name">Enterprise</div>
+                <div class="price-amount">$99 <span>/ شهر</span></div>
+                <div class="price-desc">للشركات التي تحتاج إلى أقصى درجات الأداء.</div>
+                <ul class="price-features">
+                    <li><i data-lucide="check" size="18"></i> كل مميزات Pro</li>
+                    <li><i data-lucide="check" size="18"></i> مدير حساب مخصص</li>
+                    <li><i data-lucide="check" size="18"></i> SLA 99.99%</li>
+                    <li><i data-lucide="check" size="18"></i> أمان متقدم (SSO)</li>
+                </ul>
+                <button class="btn btn-secondary" style="width: 100%;" onclick="openPurchaseModal('خطة Enterprise', 'للشركات التي تحتاج إلى أقصى درجات الأداء', '$99 / شهر')">تواصل معنا</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials container fade-up">
+        <div class="section-header">
+            <h2>ماذا يقولون عنا</h2>
+            <p>انضم إلى آلاف المطورين والشركات التي تثق بنا.</p>
+        </div>
+
+        <div class="testi-grid">
+            <div class="testi-card">
+                <div class="testi-stars">
+                    <i data-lucide="star" fill="currentColor" size="16"></i><i data-lucide="star" fill="currentColor" size="16"></i><i data-lucide="star" fill="currentColor" size="16"></i><i data-lucide="star" fill="currentColor" size="16"></i><i data-lucide="star" fill="currentColor" size="16"></i>
+                </div>
+                <p class="testi-text">"أفضل منصة استخدمتها على الإطلاق. وفرت علينا أسابيع من وقت التطوير والنتيجة كانت مذهلة."</p>
+                <div class="testi-user">
+                    <div class="testi-avatar">أ</div>
+                    <div class="testi-info">
+                        <h4>أحمد محمود</h4>
+                        <p>CTO @ TechFlow</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testi-card">
+                <div class="testi-stars">
+                    <i data-lucide="star" fill="currentColor" size="16"></i><i data-lucide="star" fill="currentColor" size="16"></i><i data-lucide="star" fill="currentColor" size="16"></i><i data-lucide="star" fill="currentColor" size="16"></i><i data-lucide="star" fill="currentColor" size="16"></i>
+                </div>
+                <p class="testi-text">"التصميم النظيف والأداء السريع جعلا من منتجنا يبدو كأنه صُنع بواسطة فريق كامل من المصممين."</p>
+                <div class="testi-user">
+                    <div class="testi-avatar">س</div>
+                    <div class="testi-info">
+                        <h4>سارة علي</h4>
+                        <p>Product Designer</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testi-card">
+                <div class="testi-stars">
+                    <i data-lucide="star" fill="currentColor" size="16"></i><i data-lucide="star" fill="currentColor" size="16"></i><i data-lucide="star" fill="currentColor" size="16"></i><i data-lucide="star" fill="currentColor" size="16"></i><i data-lucide="star" fill="currentColor" size="16"></i>
+                </div>
+                <p class="testi-text">"دعم العملاء رائع والمنصة تتطور باستمرار. لا أستطيع تخيل العودة للطرق التقليدية."</p>
+                <div class="testi-user">
+                    <div class="testi-avatar">خ</div>
+                    <div class="testi-info">
+                        <h4>خالد حسن</h4>
+                        <p>Founder @ StartupX</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="faq fade-up">
+        <div class="section-header">
+            <h2>الأسئلة الشائعة</h2>
+            <p>كل ما تحتاج معرفته عن منصتنا.</p>
+        </div>
+
+        <div class="accordion">
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    هل أحتاج إلى خبرة تقنية؟
+                    <i data-lucide="plus" size="20"></i>
+                </button>
+                <div class="accordion-content">
+                    <p>لا، لقد صممنا المنصة لتكون بديهية وسهلة الاستخدام للجميع. يمكنك البدء وإطلاق مشروعك دون الحاجة لكتابة سطر كود واحد، بينما نوفر أدوات متقدمة للمطورين إذا رغبوا في ذلك.</p>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    هل يمكنني إلغاء الاشتراك؟
+                    <i data-lucide="plus" size="20"></i>
+                </button>
+                <div class="accordion-content">
+                    <p>نعم، يمكنك إلغاء اشتراكك في أي وقت من خلال لوحة التحكم الخاصة بك. لن يتم تحصيل أي رسوم إضافية بعد الإلغاء.</p>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    هل يوجد إصدار مجاني؟
+                    <i data-lucide="plus" size="20"></i>
+                </button>
+                <div class="accordion-content">
+                    <p>نعم، نقدم خطة "Starter" مجانية تمامًا للمشاريع الشخصية والتجارب. يمكنك الترقية للخطط المدفوعة عندما يحتاج مشروعك لموارد إضافية.</p>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    هل بياناتي آمنة؟
+                    <i data-lucide="plus" size="20"></i>
+                </button>
+                <div class="accordion-content">
+                    <p>نأخذ الأمان على محمل الجد. نستخدم أحدث تقنيات التشفير ونقوم بنسخ احتياطي دوري لبياناتك لضمان حمايتها في جميع الأوقات.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="cta-final container fade-up">
+        <div class="cta-box">
+            <h2>جاهز لبناء شيء مختلف؟</h2>
+            <p>ابدأ اليوم واستكشف تجربة جديدة في بناء منتجات رقمية احترافية بسرعة وسهولة.</p>
+            <button class="btn btn-primary" style="padding: 1rem 2.5rem; font-size: 1.1rem;">
+                ابدأ الآن مجانًا
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="logo">
+                    <i data-lucide="hexagon" stroke-width="2.5"></i>
+                    <span>نيكسوس</span>
+                </div>
+                <p>نبني أدوات المستقبل للفرق التي تسعى للتميز والابتكار في العالم الرقمي.</p>
+            </div>
+            <div class="footer-links">
+                <h4>المنتج</h4>
+                <ul>
+                    <li><a href="#features">المميزات</a></li>
+                    <li><a href="#pricing">الأسعار</a></li>
+                    <li><a href="#portfolio">الأعمال</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>الشركة</h4>
+                <ul>
+                    <li><a href="#how-it-works">كيف يعمل</a></li>
+                    <li><a href="#faq">الأسئلة الشائعة</a></li>
+                    <li><a href="javascript:void(0)" onclick="document.getElementById('contact-modal').classList.add('active'); document.body.style.overflow='hidden';">تواصل معنا</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>قانوني</h4>
+                <ul>
+                    <li><a href="#">شروط الاستخدام</a></li>
+                    <li><a href="#">سياسة الخصوصية</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p style="font-size: 0.9rem; color: var(--text-secondary);">© 2026 نيكسوس. جميع الحقوق محفوظة.</p>
+            <div class="social-icons">
+                <a href="javascript:void(0)" aria-label="Telegram"><i data-lucide="send" size="20"></i></a>
+                <a href="javascript:void(0)" aria-label="Github"><i data-lucide="code-2" size="20"></i></a>
+                <a href="javascript:void(0)" aria-label="LinkedIn"><i data-lucide="briefcase-business" size="20"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Theme Management
+        const themeToggle = document.getElementById('theme-toggle');
+        const lightIcon = document.querySelector('.light-icon');
+        const darkIcon = document.querySelector('.dark-icon');
+        const html = document.documentElement;
+
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            html.setAttribute('data-theme', savedTheme);
+            updateThemeIcons(savedTheme);
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcons(newTheme);
+        });
+
+        function updateThemeIcons(theme) {
+            if (theme === 'light') {
+                lightIcon.style.display = 'none';
+                darkIcon.style.display = 'block';
+            } else {
+                lightIcon.style.display = 'block';
+                darkIcon.style.display = 'none';
+            }
+        }
+
+        // Header Scroll Effect
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Mobile Menu
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        closeMenuBtn.addEventListener('click', closeMenuFunc);
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', closeMenuFunc);
+        });
+
+        // Purchase Modal Logic
+        let currentItemName = '';
+        
+        function openPurchaseModal(name, desc, price) {
+            currentItemName = name;
+            document.getElementById('purchase-item-name').textContent = name;
+            document.getElementById('purchase-item-price').textContent = price;
+            document.getElementById('purchase-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePurchaseModal() {
+            document.getElementById('purchase-modal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function submitPurchase(e) {
+            e.preventDefault();
+            const name = document.getElementById('p-name').value;
+            const phone = document.getElementById('p-phone').value;
+            const email = document.getElementById('p-email').value;
+            const notes = document.getElementById('p-notes').value;
+            
+            // Create WhatsApp Message
+            let message = `مرحباً، أود طلب شراء المنتج التالي:%0A`;
+            message += `📦 *المنتج:* ${currentItemName}%0A%0A`;
+            message += `👤 *الاسم:* ${name}%0A`;
+            message += `📱 *رقم الهاتف:* ${phone}%0A`;
+            if (email) message += `📧 *البريد:* ${email}%0A`;
+            if (notes) message += `📝 *ملاحظات:* ${notes}%0A`;
+            
+            // WhatsApp Number
+            const waNumber = "201115413154"; // Format with country code
+            const waUrl = `https://wa.me/${waNumber}?text=${message}`;
+            
+            // Open WhatsApp and close modal
+            window.open(waUrl, '_blank');
+            closePurchaseModal();
+            e.target.reset();
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('purchase-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePurchaseModal();
+            }
+        });
+
+        function closeMenuFunc() {
+            mobileMenu.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Accordion Logic
+        const accordionHeaders = document.querySelectorAll('.accordion-header');
+        accordionHeaders.forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const isActive = header.classList.contains('active');
+                
+                // Close all other accordions
+                accordionHeaders.forEach(otherHeader => {
+                    otherHeader.classList.remove('active');
+                    otherHeader.nextElementSibling.style.maxHeight = null;
+                });
+
+                if (!isActive) {
+                    header.classList.add('active');
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        });
+
+        // Intersection Observer for Fade-up Animation
+        const fadeElements = document.querySelectorAll('.fade-up');
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        fadeElements.forEach(element => {
+            observer.observe(element);
+        });
+
+        // Card Hover Effect (Mouse Tracking)
+        const cards = document.querySelectorAll('.feature-card');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+    </script>
+    <!-- Purchase Modal -->
+    <div class="modal-overlay" id="purchase-modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closePurchaseModal()" aria-label="إغلاق">
+                <i data-lucide="x" size="24"></i>
+            </button>
+            <div class="purchase-header">
+                <div class="step-number" style="width: 60px; height: 60px; margin: 0; flex-shrink: 0; box-shadow: none;">
+                    <i data-lucide="package" size="28"></i>
+                </div>
+                <div class="purchase-header-info">
+                    <h3 id="purchase-item-name">اسم المنتج</h3>
+                    <p id="purchase-item-price">السعر</p>
+                </div>
+            </div>
+            <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">إتمام الطلب</h2>
+            <p style="margin-bottom: 2rem; font-size: 0.95rem;">يرجى ملء البيانات التالية لتأكيد طلبك، وسيتم تحويلك لإتمام الشراء.</p>
+            
+            <form id="purchaseForm" onsubmit="submitPurchase(event)">
+                <div class="form-group">
+                    <label for="p-name">الاسم الكامل</label>
+                    <input type="text" id="p-name" class="form-control" placeholder="أدخل اسمك الثلاثي" required>
+                </div>
+                <div class="form-group">
+                    <label for="p-phone">رقم الهاتف (واتساب)</label>
+                    <input type="tel" id="p-phone" class="form-control" placeholder="01xxxxxxxxx" required dir="ltr" style="text-align: right;">
+                </div>
+                <div class="form-group">
+                    <label for="p-email">البريد الإلكتروني (اختياري)</label>
+                    <input type="email" id="p-email" class="form-control" placeholder="name@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="p-notes">ملاحظات إضافية</label>
+                    <textarea id="p-notes" class="form-control" placeholder="أي تفاصيل إضافية تود إخبارنا بها..." style="min-height: 80px;"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 1rem;">
+                    <i data-lucide="message-circle"></i>
+                    تأكيد الطلب والمتابعة
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div class="modal-overlay" id="contact-modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="document.getElementById('contact-modal').classList.remove('active'); document.body.style.overflow='';" aria-label="إغلاق">
+                <i data-lucide="x" size="24"></i>
+            </button>
+            <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">تواصل معنا</h2>
+            <p style="margin-bottom: 2rem; font-size: 0.95rem;">املأ النموذج أدناه وسيقوم فريقنا بالرد عليك في أقرب وقت.</p>
+            
+            <form id="contactForm" onsubmit="submitContact(event)">
+                <div class="form-group">
+                    <label for="c-name">الاسم الكامل</label>
+                    <input type="text" id="c-name" class="form-control" placeholder="محمد أحمد" required>
+                </div>
+                <div class="form-group">
+                    <label for="c-email">البريد الإلكتروني</label>
+                    <input type="email" id="c-email" class="form-control" placeholder="name@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="c-message">الرسالة</label>
+                    <textarea id="c-message" class="form-control" placeholder="كيف يمكننا مساعدتك؟" required style="min-height: 100px;"></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="button" onclick="sendViaWhatsApp()" class="btn btn-primary" style="flex: 1; padding: 1rem; background: #25D366; border-color: #25D366; color: white;">
+                        <i data-lucide="message-circle"></i>
+                        واتساب
+                    </button>
+                    <button type="button" onclick="sendViaEmail()" class="btn btn-outline" style="flex: 1; padding: 1rem;">
+                        <i data-lucide="mail"></i>
+                        بريد إلكتروني
+                    </button>
+                </div>
+                <button type="submit" style="display: none;">Submit</button>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        // Contact form functions
+        function validateContactForm() {
+            const name = document.getElementById('c-name').value.trim();
+            const email = document.getElementById('c-email').value.trim();
+            const message = document.getElementById('c-message').value.trim();
+            
+            if (!name || !email || !message) {
+                alert('يرجى ملء جميع الحقول المطلوبة.');
+                return false;
+            }
+            return { name, email, message };
+        }
+
+        function sendViaWhatsApp() {
+            const data = validateContactForm();
+            if (!data) return;
+            
+            const phone = "201115413154"; // نفس الرقم المستخدم في نموذج الشراء
+            const text = `مرحباً، لدي استفسار من الموقع:
+            
+👤 *الاسم:* ${data.name}
+📧 *البريد:* ${data.email}
+
+📝 *الرسالة:*
+${data.message}`;
+
+            const encodedText = encodeURIComponent(text);
+            const whatsappUrl = `https://wa.me/${phone}?text=${encodedText}`;
+            
+            window.open(whatsappUrl, '_blank');
+            
+            // Close modal
+            document.getElementById('contact-modal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function sendViaEmail() {
+            const data = validateContactForm();
+            if (!data) return;
+            
+            const to = "info@example.com"; // استبدل هذا ببريدك الفعلي
+            const subject = encodeURIComponent(`استفسار جديد من الموقع: ${data.name}`);
+            const body = encodeURIComponent(`الاسم: ${data.name}\nالبريد الإلكتروني: ${data.email}\n\nالرسالة:\n${data.message}`);
+            
+            const mailtoUrl = `mailto:${to}?subject=${subject}&body=${body}`;
+            
+            window.location.href = mailtoUrl;
+            
+            // Close modal
+            document.getElementById('contact-modal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function submitContact(e) {
+            e.preventDefault();
+            // Default to WhatsApp if they press Enter
+            sendViaWhatsApp();
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('contact-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('active');
+                document.body.style.overflow='';
+            }
+        });
+
+        // Render icons added with the contact modal markup
+        lucide.createIcons();
+    </script>
+</body>
+</html>
